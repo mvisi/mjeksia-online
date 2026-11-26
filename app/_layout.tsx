@@ -42,6 +42,20 @@ function HideSplash() {
   return null;
 }
 
+/**
+ * Shown while the database starts. Fast starts go straight from the splash to
+ * the app; if startup takes longer (the first launch copies the question
+ * bank) the splash gives way to a visible loading state instead of looking
+ * frozen.
+ */
+function StartupFallback() {
+  useEffect(() => {
+    const timer = setTimeout(() => SplashScreen.hide(), 1500);
+    return () => clearTimeout(timer);
+  }, []);
+  return <Loading label="Duke përgatitur pyetjet…" />;
+}
+
 export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
   return (
     <ThemeRoot>
@@ -87,7 +101,7 @@ function AppStack() {
 export default function RootLayout() {
   return (
     <ThemeRoot>
-      <Suspense fallback={<Loading />}>
+      <Suspense fallback={<StartupFallback />}>
         <DatabaseProvider>
           <HideSplash />
           <AppStack />
