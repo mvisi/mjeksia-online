@@ -2,6 +2,7 @@
 
 export type BaseSettingDef = {
   label: string;
+  /** "dev" settings are only listed in development builds. */
   scope?: "dev";
   description?: string;
 };
@@ -23,19 +24,12 @@ export type AnySettingDef = SelectSettingDef | ToggleSettingDef;
 
 // ── Schema shape types ─────────────────────────────────────────────────
 
-export type Subsections = Record<
+export type SettingsSchema<Key extends string = string> = Record<
   string,
   {
     title: string;
-    settings: Record<string, AnySettingDef>;
-  }
->;
-
-export type SettingsSchema = Record<
-  string,
-  {
-    title: string;
+    description: string;
     icon: string;
-    subsections: Subsections;
+    subsections: Record<string, { title: string; settings: readonly Key[] }>;
   }
 >;

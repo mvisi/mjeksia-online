@@ -1,51 +1,100 @@
 # Mjeksia Online
 
-An interactive digital platform built for medical students, helping them prepare for their exams.
+An offline study app for Albanian medical students preparing for the state entrance exam
+(Biologji, Fizikë, Kimi). It contains the 2 999 questions of the official
+[QSHA question bank](https://qsha.gov.al/provimi-i-informatizuar-i-mjekesise/), each with a short
+explanation and a detailed, step-by-step reasoning.
 
-### ⚠️ Warning
+> Android is the supported platform. Download the APK from the
+> [Releases](https://github.com/mvisi/mjeksia-online/releases) page and sideload it.
 
-This application only works on Android and does not yet support iOS. Attempting to run it on any other platform will not work.
+## Features
 
-## Downloading
+- **Pyetje të çfarëdoshme (Arena):** one question at a time with instant feedback. Prefers questions
+  you have not seen yet, and can be filtered by subject or topic.
+- **Model testi:** a timed exam that samples every topic in proportion to its share of the bank.
+  Flag questions, jump around with the question grid, change answers until you finish.
+- **Tests by subject or topic** from the question bank.
+- **Resume anytime:** answers are saved as you tap. Leaving a test pauses it; the home screen
+  offers to continue. The clock follows the real time, so it can't drift or be paused by
+  switching apps.
+- **Gabimet e mia:** every question you got wrong, from any mode, until you answer it right twice in
+  a row. Test them as a set.
+- **Progress:** accuracy, study streak, time studied, average test score, and mastery per
+  subject and topic.
+- **Search** across questions and options. Diacritics are optional (`pergjigje` finds
+  `përgjigje`).
+- **Results and review:** score, per-topic breakdown, retest everything or only the misses.
+- 8 colour themes, light/dark/system.
 
-For the time being this app is not available in the Google Play Store. You can download the APK file from the [Releases](https://github.com/Notava1ble/mjeksia-online/releases) page, after which you will need to manually sideload it on your device.
+## Development
 
-### Features
+```bash
+pnpm install
+pnpm start          # Expo dev server (use a development build on Android)
+pnpm test           # logic + database tests (Node, no device needed)
+pnpm typecheck && pnpm lint
+```
 
-- **Arena (Pyetje të Çfarëdoshme / Random Questions):** Practice your knowledge by answering random questions on the go. Every question comes with a comprehensive explanation.
-- **Mock Exams (Model Testi):** Simulate a real testing environment. Sit down and test yourself under time pressure.
-- **Test History (Historia e Testeve):** Keep track of your past test attempts, analyze your final scores, and monitor your overall progress to identify areas that need more focus.
-- **In-depth Explanations:** For every choice you make (right or wrong), the app immediately provides the reasoning behind it to reinforce the optimal learning path.
+Stack: Expo SDK 58 (React Native 0.88, React 19.3, New Architecture, React Compiler),
+Expo Router native tabs, NativeWind 4, Drizzle ORM on expo-sqlite.
 
-### Frequently Asked Questions (FAQ)
+### Project layout
 
-**1. Who is this application for?**
-This app is for medical students in Albania preparing for their state exams.
+```
+app/                 routes (Expo Router)
+components/          ui/ (design system), question/, test/, lists/, settings/
+hooks/               useQuery (live DB queries), useCountdown, useStartTest, useAppTheme
+lib/                 pure logic: test engine, rich text / TeX parsing, sampling, stats
+services/db/         schema, queries and the DatabaseProvider
+services/settings/   typed settings stored in expo-sqlite/kv-store
+scripts/             content build tools
+__tests__/           Jest tests (run against the real question bank)
+```
 
-**2. Does it require an internet connection?**
-No, it does not require an internet connection. The question bank and test history are stored locally on your device.
+### Data: two databases
 
-**3. How does the "Mock Exam" work?**
-When you start a "Model Testi", the application generates a comprehensive session with a set number of questions. It tracks the time left and calculates your final score based on your selected answers, mimicking the pressure of an actual medical exam.
+| File         | What                                                                | Changes                    |
+| ------------ | ------------------------------------------------------------------- | -------------------------- |
+| `content.db` | Questions, topics, pre-rendered formulas, search index (read-only). | Replaced on content update |
+| `user.db`    | Test sessions and every answer given.                               | Drizzle migrations         |
 
-**4. Can I see what mistakes I've made?**
-Yes! The system tracks your session history, giving you the ability to review past tests and eventually revisit questions you got wrong to solidify your reasoning.
+At startup `services/db/client.ts` copies the bundled `assets/content.db` to
+`content-<hash>.db`, `ATTACH`es it to `user.db` and runs migrations. The file name contains a hash
+of the content, so shipping corrected questions replaces the user's copy without touching
+their history.
 
-**5. Where are the questions from?**
-The questions are gathered from the official question bank provided by [QSHA](https://qsha.gov.al/). You can view the official question bank [here](https://qsha.gov.al/provimi-i-informatizuar-i-mjekesise/).
+### Updating questions
 
-## How to Contribute
+Edit `assets/content.db` (or point the script at a new export), then rebuild it:
 
-All kinds of feedback and contributions are welcomed!
+```bash
+pnpm build:content   # normalises text, renders every formula with MathJax, rebuilds search,
+                     # writes constants/content-version.ts
+pnpm build:images    # if images in assets/contextImgs changed
+pnpm test            # checks every formula and image is present
+```
 
-- **Report Inaccuracies:** If you spot a question with an incorrect explanation, please let me know!
-- **Open an Issue:** All feedback and bug reports can be tracked via [the GitHub repository Issues page](https://github.com/Notava1ble/mjeksia-online/issues). When reporting, please provide as much context as possible (e.g., question ID, screenshot).
-- **Suggest Improvements**
+Question text is lightweight Markdown: `**bold**`, numbered/bulleted lists, inline `$…$` and
+display `$$…$$` TeX. Formulas are rendered to SVG at build time, with glyph outlines stored
+once and shared, so the app needs no math engine and works offline.
 
-### Opening an Issue
+### Changing the user schema
 
-1. Navigate to the **Issues** tab in [our GitHub repository](https://github.com/Notava1ble/mjeksia-online/issues).
-2. Click on **New Issue**.
-3. Provide a clear and descriptive title.
-4. Describe the problem in detail.
-5. Click **Submit**, and we will review your ticket as soon as possible.
+Edit `services/db/user-schema.ts`, then run `pnpm db:generate` and review the generated SQL in
+`drizzle/` before committing.
+
+## FAQ
+
+**Who is this for?** Medical students in Albania preparing for the state exam.
+
+**Does it need internet?** No. The question bank and your history are stored on the device.
+
+**Where do the questions come from?** The official QSHA question bank. Explanations were written
+for this app. If you find a mistake, please report it.
+
+## Contributing
+
+Bug reports and corrections are welcome on the
+[issues page](https://github.com/mvisi/mjeksia-online/issues). Please include the subject, topic
+and question number (shown above each question) and, if possible, a screenshot.

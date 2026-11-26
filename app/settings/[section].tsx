@@ -1,77 +1,64 @@
-import { SettingItem } from "@/components/SettingItem";
-import { SettingsKey, settingsSchema } from "@/services/settings/settings";
-import Ionicons from "@expo/vector-icons/Ionicons";
-import { Stack, router, useLocalSearchParams } from "expo-router";
-import { Pressable, ScrollView, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SettingRow } from "@/components/settings/SettingRow";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { formatDuration } from "@/lib/format";
+import {
+  isSettingVisible,
+  settingsSchema,
+  useTestPlan,
+  type SettingsKey,
+  type SettingsSectionKey,
+} from "@/services/settings/settings";
+import { Stack, useLocalSearchParams } from "expo-router";
+import { Fragment } from "react";
+import { ScrollView, Text, View } from "react-native";
 
-export default function SettingSectionScreen() {
+function PlanSummary({ kind }: { kind: "mock" | "focus" }) {
+  const plan = useTestPlan(kind);
+  return (
+    <Text className="px-4 pb-4 text-sm text-muted-foreground">
+      Gjithsej: {plan.questionCount} pyetje ·{" "}
+      {formatDuration(plan.questionCount * plan.secondsPerQuestion)}
+    </Text>
+  );
+}
+
+export default function SettingsSection() {
   const { section } = useLocalSearchParams<{ section: string }>();
-
-  if (!section || !(section in settingsSchema)) {
-    return (
-      <SafeAreaView className="flex-1 items-center justify-center bg-background">
-        <Stack.Screen options={{ headerShown: false }} />
-        <Text className="text-foreground text-lg">Section not found</Text>
-        <Pressable onPress={() => router.back()}>
-          <Text className="text-primary">
-            <Ionicons name="arrow-back" size={20} color="gray" />
-            Back
-          </Text>
-        </Pressable>
-      </SafeAreaView>
-    );
+  if (!(section in settingsSchema)) {
+    return <EmptyState icon="settings-outline" title="Ky seksion nuk ekziston" />;
   }
-
-  const sectionDef = settingsSchema[section as keyof typeof settingsSchema];
-  const subsections = Object.entries(sectionDef.subsections);
+  const def = settingsSchema[section as SettingsSectionKey];
 
   return (
-    <SafeAreaView className="flex-1 bg-background">
-      <Stack.Screen options={{ headerShown: false }} />
-      {/* Custom Header so we can control styling perfectly in our app layout */}
-      <View className="flex-row items-center px-4 py-4 border-b border-border bg-background z-10">
-        <Pressable
-          onPress={() => router.back()}
-          className="mr-4 p-1 active:opacity-50"
-        >
-          <Ionicons
-            name="arrow-back"
-            size={24}
-            className="text-foreground"
-            color="gray"
-          />
-        </Pressable>
-        <Text className="text-foreground text-xl font-bold flex-1">
-          {sectionDef.title}
-        </Text>
-      </View>
-
-      <ScrollView className="flex-1 px-4 py-2">
-        {subsections.map(([subKey, subDef]) => (
-          <View key={subKey} className="mt-4 mb-6">
-            <Text className="text-primary text-sm font-semibold uppercase tracking-wider mb-3 ml-1">
-              {subDef.title}
-            </Text>
-
-            <View className="bg-card rounded-xl overflow-hidden border border-border">
-              {Object.entries(subDef.settings).map(
-                ([settingKey, settingDef], index, array) => (
-                  <View key={settingKey}>
-                    <SettingItem
-                      settingKey={settingKey as SettingsKey}
-                      def={settingDef}
-                    />
-                    {index < array.length - 1 && (
-                      <View className="h-[1px] bg-border" />
-                    )}
-                  </View>
-                ),
-              )}
-            </View>
-          </View>
-        ))}
+    <>
+      <Stack.Screen options={{ title: def.title }} />
+      <ScrollView className="flex-1 bg-background" contentContainerStyle={{ padding: 16, gap: 24 }}>
+        {Object.entries<{ title: string; settings: readonly SettingsKey[] }>(def.subsections).map(
+          ([key, sub]) => {
+            const keys = sub.settings.filter(isSettingVisible);
+            if (keys.length === 0) return null;
+            return (
+              <View key={key}>
+                <Text
+                  accessibilityRole="header"
+                  className="mb-2 ml-1 text-xs font-semibold uppercase tracking-wider text-primary"
+                >
+                  {sub.title}
+                </Text>
+                <View className="overflow-hidden rounded-2xl border border-border bg-card">
+                  {keys.map((settingKey, i) => (
+                    <Fragment key={settingKey}>
+                      {i > 0 ? <View className="h-px bg-border" /> : null}
+                      <SettingRow settingKey={settingKey} />
+                    </Fragment>
+                  ))}
+                  {key === "mock" || key === "focus" ? <PlanSummary kind={key} /> : null}
+                </View>
+              </View>
+            );
+          },
+        )}
       </ScrollView>
-    </SafeAreaView>
+    </>
   );
 }

@@ -1,54 +1,84 @@
-// settings.tsx
-import { getThemeColor } from "@/constants/theme";
-import { useAppTheme } from "@/hooks/useAppTheme";
-import { settingsSchema } from "@/services/settings/settings";
-import Ionicons from "@expo/vector-icons/Ionicons";
-import { router } from "expo-router";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import { Icon, type IconName } from "@/components/ui/Icon";
+import { TabScreen } from "@/components/ui/TabScreen";
+import { SectionTitle } from "@/components/ui/Text";
+import { QUESTION_COUNT } from "@/constants/content-version";
+import { useDb } from "@/services/db/DatabaseProvider";
+import { resetProgress } from "@/services/db/sessions";
+import { settingsSchema, type SettingsSectionKey } from "@/services/settings/settings";
+import Constants from "expo-constants";
+import { useRouter } from "expo-router";
+import { Alert, Linking, Text, View } from "react-native";
+
+const ISSUES_URL = "https://github.com/mvisi/mjeksia-online/issues";
 
 export default function Settings() {
-  const { scheme, theme } = useAppTheme();
+  const db = useDb();
+  const router = useRouter();
 
-  const accentForegroundColor = getThemeColor(
-    "--accent-foreground",
-    scheme,
-    theme,
-  );
+  const confirmReset = () =>
+    Alert.alert(
+      "Fshi të gjithë progresin?",
+      "Historia e testeve, gabimet dhe statistikat fshihen përgjithmonë. Fondi i pyetjeve mbetet.",
+      [
+        { text: "Anulo", style: "cancel" },
+        { text: "Fshi gjithçka", style: "destructive", onPress: () => resetProgress(db) },
+      ],
+    );
+
   return (
-    <ScrollView className="flex-1 bg-background px-4 pt-4">
-      <View className="gap-4">
-        {Object.entries(settingsSchema).map(([sectionKey, sectionDef]) => (
-          <Pressable
-            key={sectionKey}
-            onPress={() =>
-              router.push({
-                pathname: "/settings/[section]",
-                params: { section: sectionKey },
-              })
-            }
-            className="flex-row items-center justify-between p-4 bg-card rounded-xl border border-border active:opacity-70"
-          >
-            <View className="flex-row items-center gap-4">
-              <View className="w-10 h-10 rounded-full bg-accent items-center justify-center">
-                <Ionicons
-                  name={sectionDef.icon as keyof typeof Ionicons.glyphMap}
-                  size={20}
-                  color={accentForegroundColor}
-                />
+    <TabScreen title="Cilësimet">
+      <View className="mb-8 gap-3">
+        {(Object.keys(settingsSchema) as SettingsSectionKey[]).map((key) => {
+          const section = settingsSchema[key];
+          return (
+            <Card
+              key={key}
+              onPress={() =>
+                router.push({ pathname: "/settings/[section]", params: { section: key } })
+              }
+              className="flex-row items-center gap-4"
+            >
+              <View className="h-10 w-10 items-center justify-center rounded-full bg-accent">
+                <Icon name={section.icon as IconName} size={20} token="--accent-foreground" />
               </View>
-              <Text className="text-foreground text-lg font-medium">
-                {sectionDef.title}
-              </Text>
-            </View>
-            <Ionicons
-              name="chevron-forward"
-              size={20}
-              color="gray"
-              className="text-muted-foreground"
-            />
-          </Pressable>
-        ))}
+              <View className="flex-1">
+                <Text className="text-base font-semibold text-card-foreground">
+                  {section.title}
+                </Text>
+                <Text className="text-sm text-muted-foreground">{section.description}</Text>
+              </View>
+              <Icon name="chevron-forward" size={18} token="--muted-foreground" />
+            </Card>
+          );
+        })}
       </View>
-    </ScrollView>
+
+      <SectionTitle>Rreth aplikacionit</SectionTitle>
+      <Card className="mb-8 gap-3">
+        <Text className="text-card-foreground">
+          {QUESTION_COUNT} pyetje nga fondi zyrtar i QSHA-së, me shpjegime për çdo përgjigje.
+          Funksionon pa internet.
+        </Text>
+        <Text className="text-sm text-muted-foreground">
+          Versioni {Constants.expoConfig?.version}
+        </Text>
+        <Button
+          variant="outline"
+          icon="logo-github"
+          title="Raporto një gabim në pyetje"
+          onPress={() => void Linking.openURL(ISSUES_URL)}
+        />
+      </Card>
+
+      <SectionTitle>Të dhënat</SectionTitle>
+      <Button
+        variant="destructive"
+        icon="trash-outline"
+        title="Fshi të gjithë progresin"
+        onPress={confirmReset}
+      />
+    </TabScreen>
   );
 }

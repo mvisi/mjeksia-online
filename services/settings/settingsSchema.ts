@@ -1,11 +1,26 @@
 import type { AnySettingDef, SettingsSchema } from "./settingTypes";
 
+const QUESTION_COUNTS = [
+  { value: "10", label: "10" },
+  { value: "25", label: "25" },
+  { value: "50", label: "50" },
+  { value: "100", label: "100" },
+] as const;
+
+/** Time is set per question so count and duration can never disagree. */
+const PACES = [
+  { value: "45", label: "45 sek" },
+  { value: "60", label: "1 min" },
+  { value: "90", label: "1.5 min" },
+  { value: "120", label: "2 min" },
+] as const;
+
 // ── Flat registry (single source of truth for types) ────────────────────
 
 export const settingsDefs = {
   user_color_scheme: {
     type: "select",
-    label: "Theme",
+    label: "Tema e ngjyrave",
     options: [
       { value: "Zen", label: "Zen" },
       { value: "Amber", label: "Amber" },
@@ -20,71 +35,62 @@ export const settingsDefs = {
   },
   user_appearance: {
     type: "select",
-    label: "Appearance",
+    label: "Pamja",
     options: [
-      { value: "light", label: "Light" },
-      { value: "dark", label: "Dark" },
-      { value: "system", label: "System" },
+      { value: "light", label: "E çelët" },
+      { value: "dark", label: "E errët" },
+      { value: "system", label: "Sipas sistemit" },
     ],
     default: "system",
   },
-  hide_arena_explanation: {
+  hide_explanations: {
     type: "toggle",
-    label: "Hide Explanations",
-    description: "Do not show explanations after guessing.",
+    label: "Fshih shpjegimet",
+    description: "Mos shfaq shpjegimin pasi zgjedh një përgjigje.",
     default: false,
   },
-  test_question_amount: {
+  expand_reasoning: {
+    type: "toggle",
+    label: "Hap arsyetimin e plotë",
+    description: "Shfaq menjëherë arsyetimin e detajuar në vend të shpjegimit të shkurtër.",
+    default: false,
+  },
+  haptics: {
+    type: "toggle",
+    label: "Dridhjet",
+    description: "Dridhje e lehtë kur zgjedh një përgjigje dhe në fund të kohës.",
+    default: true,
+  },
+  mock_question_count: {
     type: "select",
     label: "Numri i pyetjeve",
-    options: [
-      { value: "10", label: "10 pyetje" },
-      { value: "25", label: "25 pyetje" },
-      { value: "50", label: "50 pyetje" },
-    ],
+    options: QUESTION_COUNTS,
     default: "50",
   },
-  test_time: {
+  mock_seconds_per_question: {
     type: "select",
-    label: "Koha e testit",
-    options: [
-      { value: "10", label: "10 min" },
-      { value: "25", label: "25 min" },
-      { value: "50", label: "50 min" },
-    ],
-    default: "50",
+    label: "Koha për pyetje",
+    options: PACES,
+    default: "60",
   },
-  focus_test_question_amount: {
+  focus_question_count: {
     type: "select",
     label: "Numri i pyetjeve",
-    options: [
-      { value: "10", label: "10 pyetje" },
-      { value: "25", label: "25 pyetje" },
-      { value: "50", label: "50 pyetje" },
-    ],
-    default: "50",
+    options: QUESTION_COUNTS,
+    default: "25",
   },
-  focus_test_time: {
+  focus_seconds_per_question: {
     type: "select",
-    label: "Koha e testit",
-    options: [
-      { value: "10", label: "10 min" },
-      { value: "25", label: "25 min" },
-      { value: "50", label: "50 min" },
-    ],
-    default: "50",
+    label: "Koha për pyetje",
+    options: PACES,
+    default: "60",
   },
   always_show_image_placeholder: {
     type: "toggle",
-    label: "Always Show Image Placeholder",
-    description: "Always show the image placeholder even if there is no image.",
+    label: "Shfaq vendin e imazhit",
+    description: "Shfaq një kuadrat bosh edhe kur pyetja nuk ka imazh.",
     default: false,
-  },
-  show_reasoning_instead_of_explanation: {
-    type: "toggle",
-    label: "Show advanced reasoning",
-    description: "Show advanced reasoning instead of explanation.",
-    default: true,
+    scope: "dev",
   },
 } as const satisfies Record<string, AnySettingDef>;
 
@@ -105,48 +111,41 @@ export type SettingValue<K extends SettingsKey> = SettingsDefs[K] extends {
 
 // ── Nested schema (UI layout only) ─────────────────────────────────────
 
-export const settingsSchema: SettingsSchema = {
-  Appearance: {
-    title: "Appearance",
+export const settingsSchema = {
+  appearance: {
+    title: "Pamja",
+    description: "Tema dhe ngjyrat",
     icon: "color-palette-outline",
     subsections: {
-      UI: {
-        title: "User Interface",
-        settings: {
-          user_color_scheme: settingsDefs.user_color_scheme,
-          user_appearance: settingsDefs.user_appearance,
-        },
+      ui: {
+        title: "Ndërfaqja",
+        settings: ["user_color_scheme", "user_appearance"],
       },
     },
   },
-  TestPreferences: {
-    title: "Test Preferences",
+  practice: {
+    title: "Testet dhe praktika",
+    description: "Gjatësia e testeve, shpjegimet",
     icon: "document-text-outline",
     subsections: {
-      Arena: {
-        title: "Questions",
-        settings: {
-          hide_arena_explanation: settingsDefs.hide_arena_explanation,
-          always_show_image_placeholder:
-            settingsDefs.always_show_image_placeholder,
-          show_reasoning_instead_of_explanation:
-            settingsDefs.show_reasoning_instead_of_explanation,
-        },
+      questions: {
+        title: "Pyetjet",
+        settings: ["hide_explanations", "expand_reasoning", "haptics"],
       },
-      ModelTesti: {
-        title: "Model Testi",
-        settings: {
-          test_question_amount: settingsDefs.test_question_amount,
-          test_time: settingsDefs.test_time,
-        },
+      mock: {
+        title: "Model testi",
+        settings: ["mock_question_count", "mock_seconds_per_question"],
       },
-      FocusTest: {
-        title: "Teste te fokusuara",
-        settings: {
-          focus_test_question_amount: settingsDefs.focus_test_question_amount,
-          focus_test_time: settingsDefs.focus_test_time,
-        },
+      focus: {
+        title: "Testet sipas temës",
+        settings: ["focus_question_count", "focus_seconds_per_question"],
+      },
+      developer: {
+        title: "Zhvilluesi",
+        settings: ["always_show_image_placeholder"],
       },
     },
   },
-};
+} as const satisfies SettingsSchema<SettingsKey>;
+
+export type SettingsSectionKey = keyof typeof settingsSchema;

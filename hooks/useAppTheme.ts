@@ -1,22 +1,26 @@
-import { type AppearanceName, type ColorSchemeName } from "@/constants/theme";
+import {
+  getThemeColor,
+  type AppearanceName,
+  type ColorSchemeName,
+  type ThemeToken,
+} from "@/constants/theme";
 import { useSetting } from "@/services/settings/settings";
 import { useColorScheme } from "react-native";
 
 export function useAppTheme() {
   const [scheme] = useSetting("user_color_scheme");
   const [appearance] = useSetting("user_appearance");
-  const systemScheme = useColorScheme();
+  const system = useColorScheme();
 
-  const resolvedAppearance =
-    appearance === "system"
-      ? ((systemScheme ?? "light") as AppearanceName)
-      : (appearance as AppearanceName);
-
-  const isDark = resolvedAppearance === "dark";
+  const resolved: AppearanceName =
+    appearance === "system" ? (system === "dark" ? "dark" : "light") : appearance;
 
   return {
     scheme: scheme as ColorSchemeName,
-    theme: resolvedAppearance,
-    isDark,
-  } as const;
+    appearance: resolved,
+    isDark: resolved === "dark",
+    /** Theme color for props that do not accept classNames (icons, native UI). */
+    color: (token: ThemeToken, opacity?: number) =>
+      getThemeColor(token, scheme as ColorSchemeName, resolved, opacity),
+  };
 }

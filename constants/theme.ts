@@ -47,6 +47,8 @@ export const NAV_THEME = {
       "--destructive-foreground": "0 0% 100%",
       "--success": "142.1 76.2% 36.3%",
       "--success-foreground": "0 0% 100%",
+      "--warning": "32 95% 44%",
+      "--warning-foreground": "0 0% 100%",
       "--info": "221.2 83.2% 53.3%",
       "--info-foreground": "0 0% 100%",
       "--border": "240 4.0000% 90.1961%",
@@ -87,6 +89,8 @@ export const NAV_THEME = {
       "--destructive-foreground": "0 0% 100%",
       "--success": "142.1 70.6% 45.3%",
       "--success-foreground": "0 0% 100%",
+      "--warning": "43 96% 56%",
+      "--warning-foreground": "26 83% 14%",
       "--info": "217.2 91.2% 59.8%",
       "--info-foreground": "0 0% 100%",
       "--border": "240 8.1967% 11.9608%",
@@ -129,6 +133,8 @@ export const NAV_THEME = {
       "--destructive-foreground": "60 30% 96%",
       "--success": "135 94% 65%",
       "--success-foreground": "231 15% 18%",
+      "--warning": "32 95% 44%",
+      "--warning-foreground": "0 0% 100%",
       "--info": "191 97% 77%",
       "--info-foreground": "231 15% 18%",
       "--border": "60 5% 80%",
@@ -169,6 +175,8 @@ export const NAV_THEME = {
       "--destructive-foreground": "60 30% 96%",
       "--success": "135 94% 65%",
       "--success-foreground": "231 15% 18%",
+      "--warning": "43 96% 56%",
+      "--warning-foreground": "26 83% 14%",
       "--info": "191 97% 77%",
       "--info-foreground": "231 15% 18%",
       "--border": "231 14% 31%",
@@ -211,6 +219,8 @@ export const NAV_THEME = {
       "--destructive-foreground": "0 0% 100%",
       "--success": "142 30% 40%",
       "--success-foreground": "42 30% 96%",
+      "--warning": "32 95% 44%",
+      "--warning-foreground": "0 0% 100%",
       "--info": "210 30% 40%",
       "--info-foreground": "42 30% 96%",
       "--border": "41.7391 20.3540% 77.8431%",
@@ -251,6 +261,8 @@ export const NAV_THEME = {
       "--destructive-foreground": "0 0% 100%",
       "--success": "142 30% 60%",
       "--success-foreground": "0 0% 10%",
+      "--warning": "43 96% 56%",
+      "--warning-foreground": "26 83% 14%",
       "--info": "210 30% 60%",
       "--info-foreground": "0 0% 10%",
       "--border": "0 0% 17.2549%",
@@ -293,6 +305,8 @@ export const NAV_THEME = {
       "--destructive-foreground": "0 0% 100%",
       "--success": "142 100% 35%",
       "--success-foreground": "0 0% 100%",
+      "--warning": "32 95% 44%",
+      "--warning-foreground": "0 0% 100%",
       "--info": "195 100% 45%",
       "--info-foreground": "0 0% 100%",
       "--border": "0 0% 0%",
@@ -333,6 +347,8 @@ export const NAV_THEME = {
       "--destructive-foreground": "0 0% 100%",
       "--success": "142 100% 50%",
       "--success-foreground": "0 0% 0%",
+      "--warning": "43 96% 56%",
+      "--warning-foreground": "26 83% 14%",
       "--info": "195 100% 60%",
       "--info-foreground": "0 0% 0%",
       "--border": "0 0% 100%",
@@ -375,6 +391,8 @@ export const NAV_THEME = {
       "--destructive-foreground": "0 0% 100%",
       "--success": "142.1 76.2% 36.3%",
       "--success-foreground": "0 0% 100%",
+      "--warning": "32 95% 44%",
+      "--warning-foreground": "0 0% 100%",
       "--info": "221.2 83.2% 53.3%",
       "--info-foreground": "0 0% 100%",
       "--border": "220 13.0435% 90.9804%",
@@ -415,6 +433,8 @@ export const NAV_THEME = {
       "--destructive-foreground": "0 0% 100%",
       "--success": "142.1 70.6% 45.3%",
       "--success-foreground": "0 0% 100%",
+      "--warning": "43 96% 56%",
+      "--warning-foreground": "26 83% 14%",
       "--info": "217.2 91.2% 59.8%",
       "--info-foreground": "0 0% 100%",
       "--border": "0 0% 25.0980%",
@@ -457,6 +477,8 @@ export const NAV_THEME = {
       "--destructive-foreground": "0 0% 100%",
       "--success": "109.2308 57.6355% 39.8039%",
       "--success-foreground": "0 0% 100%",
+      "--warning": "32 95% 44%",
+      "--warning-foreground": "0 0% 100%",
       "--info": "197.0667 96.5665% 45.6863%",
       "--info-foreground": "0 0% 100%",
       "--border": "225.0000 13.5593% 76.8627%",
@@ -497,6 +519,8 @@ export const NAV_THEME = {
       "--destructive-foreground": "240 21.0526% 14.9020%",
       "--success": "115.4545 54.0984% 76.0784%",
       "--success-foreground": "240 21.0526% 14.9020%",
+      "--warning": "43 96% 56%",
+      "--warning-foreground": "26 83% 14%",
       "--info": "189.1837 71.0145% 72.9412%",
       "--info-foreground": "240 21.0526% 14.9020%",
       "--border": "236.8421 16.2393% 22.9412%",
@@ -539,6 +563,8 @@ export const NAV_THEME = {
       "--destructive-foreground": "0 0% 100%",
       "--success": "142 100% 50%",
       "--success-foreground": "240 41.4634% 8.0392%",
+      "--warning": "32 95% 44%",
+      "--warning-foreground": "0 0% 100%",
       "--info": "186 100% 50%",
       "--info-foreground": "240 41.4634% 8.0392%",
       "--border": "198.0000 18.5185% 89.4118%",
@@ -579,6 +605,8 @@ export const NAV_THEME = {
       "--destructive-foreground": "0 0% 100%",
       "--success": "142 100% 50%",
       "--success-foreground": "240 41.4634% 8.0392%",
+      "--warning": "43 96% 56%",
+      "--warning-foreground": "26 83% 14%",
       "--info": "186 100% 50%",
       "--info-foreground": "240 41.4634% 8.0392%",
       "--border": "240 34.2857% 27.4510%",
@@ -621,6 +649,8 @@ export const NAV_THEME = {
       "--destructive-foreground": "223.8136 -172.5242% 100.0000%",
       "--success": "142.1 76.2% 36.3%",
       "--success-foreground": "223.8136 -172.5242% 100.0000%",
+      "--warning": "32 95% 44%",
+      "--warning-foreground": "0 0% 100%",
       "--info": "221.2 83.2% 53.3%",
       "--info-foreground": "223.8136 -172.5242% 100.0000%",
       "--border": "223.8136 0.0001% 89.5577%",
@@ -661,6 +691,8 @@ export const NAV_THEME = {
       "--destructive-foreground": "0 0% 0%",
       "--success": "142.1 70.6% 45.3%",
       "--success-foreground": "0 0% 10%",
+      "--warning": "43 96% 56%",
+      "--warning-foreground": "26 83% 14%",
       "--info": "217.2 91.2% 59.8%",
       "--info-foreground": "0 0% 10%",
       "--border": "223.8136 0.0000% 14.0871%",
@@ -694,28 +726,36 @@ export const themes = Object.fromEntries(
     Object.fromEntries(
       Object.entries(scheme).map(([themeName, values]) => [
         themeName,
-        vars(values as any),
+        vars(values as Record<string, string>),
       ]),
     ),
   ]),
 ) as Record<ColorSchemeName, Record<AppearanceName, ReturnType<typeof vars>>>;
 
+export type ThemeToken = keyof (typeof NAV_THEME)["Leadgen"]["light"] & `--${string}`;
+
+const colorCache = new Map<string, string>();
+
+/** Resolves a theme token to a color string usable in native props. */
 export function getThemeColor(
-  color: keyof (typeof NAV_THEME)["Leadgen"]["light"],
+  token: ThemeToken,
   scheme: ColorSchemeName,
-  theme: AppearanceName,
+  appearance: AppearanceName,
   opacity?: number,
-) {
-  const hslValue = (NAV_THEME[scheme][theme] as any)[color];
+): string {
+  const cacheKey = `${scheme}|${appearance}|${token}|${opacity ?? ""}`;
+  const cached = colorCache.get(cacheKey);
+  if (cached) return cached;
 
-  const colorObj = Color(`hsl(${hslValue})`);
-
-  if (opacity === undefined) {
-    return colorObj.hsl().string();
-  }
-
-  return colorObj
-    .alpha(Math.max(0, Math.min(1, opacity)))
-    .rgb()
-    .string();
+  const values = NAV_THEME[scheme][appearance] as Record<string, string>;
+  const color = Color(`hsl(${values[token]})`);
+  const result =
+    opacity === undefined
+      ? color.hex()
+      : color
+          .alpha(Math.max(0, Math.min(1, opacity)))
+          .rgb()
+          .string();
+  colorCache.set(cacheKey, result);
+  return result;
 }
